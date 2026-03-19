@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% block title %}Students{% endblock %}
+{% block page_title %}Students{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <p class="mb-0" style="color:#6b7c93; font-size:14px;">{{ students|length }} students found</p>
+  </div>
+  <a href="{% url 'student_create' %}" class="btn-ep btn d-flex align-items-center gap-2">
+    <i class="bi bi-person-plus-fill"></i> Add Student
+  </a>
+</div>
+
+<!-- Filters -->
+<div class="ep-card mb-4">
+  <form method="get" class="row g-3 align-items-end">
+    <div class="col-md-4">
+      <label class="form-label" style="font-size:12px; font-weight:600; color:#6b7c93;">SEARCH</label>
+      <input type="text" name="q" value="{{ query }}" class="form-control" placeholder="Name or admission no...">
+    </div>
+    <div class="col-md-3">
+      <label class="form-label" style="font-size:12px; font-weight:600; color:#6b7c93;">CLASS</label>
+      <select name="class" class="form-select">
+        <option value="">All Classes</option>
+        {% for c in classes %}
+        <option value="{{ c.pk }}" {% if class_filter == c.pk|stringformat:"s" %}selected{% endif %}>{{ c.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-3">
+      <label class="form-label" style="font-size:12px; font-weight:600; color:#6b7c93;">STATUS</label>
+      <select name="status" class="form-select">
+        <option value="">All Statuses</option>
+        <option value="active" {% if status_filter == 'active' %}selected{% endif %}>Active</option>
+        <option value="inactive" {% if status_filter == 'inactive' %}selected{% endif %}>Inactive</option>
+      </select>
+    </div>
+    <div class="col-md-2">
+      <button type="submit" class="btn-ep btn w-100">Filter</button>
+    </div>
+  </form>
+</div>
+
+<div class="ep-card">
+  <div class="table-responsive">
+    <table class="ep-table">
+      <thead>
+        <tr>
+          <th>Admission No.</th>
+          <th>Student Name</th>
+          <th>Class</th>
+          <th>Parent Phone</th>
+          <th>Fee Balance</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for student in students %}
+        <tr>
+          <td><code style="font-size:12px; background:#f4f7fb; padding:3px 7px; border-radius:4px;">{{ student.admission_number }}</code></td>
+          <td>
+            <a href="{% url 'student_detail' student.pk %}" style="font-weight:600; color:#0d1b2a; text-decoration:none;">
+              {{ student.full_name }}
+            </a>
+          </td>
+          <td>{{ student.student_class.name|default:"—" }}</td>
+          <td>{{ student.parent_phone }}</td>
+          <td>
+            {% if student.is_defaulter %}
+              <span style="color:#e53935; font-weight:700;">KES {{ student.balance }}</span>
+            {% else %}
+              <span style="color:#00a040; font-weight:600;">✓ Cleared</span>
+            {% endif %}
+          </td>
+          <td>
+            <span class="ep-badge {% if student.status == 'active' %}badge-completed{% else %}badge-failed{% endif %}">
+              {{ student.get_status_display }}
+            </span>
+          </td>
+          <td>
+            <div class="d-flex gap-1">
+              <a href="{% url 'student_detail' student.pk %}" class="btn btn-sm btn-outline-secondary" title="View" style="border-radius:6px;">
+                <i class="bi bi-eye"></i>
+              </a>
+              <a href="{% url 'student_edit' student.pk %}" class="btn btn-sm btn-outline-primary" title="Edit" style="border-radius:6px;">
+                <i class="bi bi-pencil"></i>
+              </a>
+              <a href="{% url 'student_delete' student.pk %}" class="btn btn-sm btn-outline-danger" title="Delete" style="border-radius:6px;">
+                <i class="bi bi-trash"></i>
+              </a>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="7" class="text-center py-5" style="color:#6b7c93;">
+            <i class="bi bi-people" style="font-size:40px; display:block; margin-bottom:12px; opacity:.3;"></i>
+            No students found. <a href="{% url 'student_create' %}">Add the first one →</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

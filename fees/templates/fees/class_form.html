@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-5">
+    <div class="ep-card">
+      <div class="d-flex align-items-center gap-3 mb-4">
+        <div style="width:44px; height:44px; background:#e8f0fe; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px;">🏫</div>
+        <div>
+          <h5 style="font-weight:800; margin:0;">{{ title }}</h5>
+          <p style="margin:0; font-size:13px; color:#6b7c93;">Class / Grade configuration</p>
+        </div>
+      </div>
+
+      <form method="post">
+        {% csrf_token %}
+        <div class="row g-3">
+          <div class="col-12">
+            <label class="form-label" style="font-size:12px; font-weight:700; color:#6b7c93; text-transform:uppercase; letter-spacing:.6px;">Class Name *</label>
+            {{ form.name }}
+          </div>
+          <div class="col-12">
+            <label class="form-label" style="font-size:12px; font-weight:700; color:#6b7c93; text-transform:uppercase; letter-spacing:.6px;">Level</label>
+            {{ form.level }}
+          </div>
+          <div class="col-12">
+            <label class="form-label" style="font-size:12px; font-weight:700; color:#6b7c93; text-transform:uppercase; letter-spacing:.6px;">Annual Fee (KES) *</label>
+            {{ form.annual_fee }}
+          </div>
+        </div>
+
+        <div class="d-flex gap-3 mt-4">
+          <button type="submit" class="btn-ep btn px-4">
+            <i class="bi bi-check-circle me-1"></i> Save Class
+          </button>
+          <a href="{% url 'class_list' %}" class="btn btn-outline-secondary px-4" style="border-radius:8px; font-size:13.5px; font-weight:600;">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

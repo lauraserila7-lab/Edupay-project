@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block title %}Fee Structure{% endblock %}
+{% block page_title %}Fee Structure{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <p class="mb-0" style="color:#6b7c93; font-size:14px;">{{ structures|length }} structure(s) configured</p>
+  <a href="{% url 'fee_structure_create' %}" class="btn-ep btn d-flex align-items-center gap-2">
+    <i class="bi bi-plus-lg"></i> Add Fee Structure
+  </a>
+</div>
+
+<div class="ep-card">
+  <div class="table-responsive">
+    <table class="ep-table">
+      <thead>
+        <tr>
+          <th>Class</th>
+          <th>Term</th>
+          <th>Year</th>
+          <th>Tuition</th>
+          <th>Activity</th>
+          <th>Exam</th>
+          <th>Other</th>
+          <th>Total</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in structures %}
+        <tr>
+          <td><strong>{{ s.student_class.name }}</strong></td>
+          <td>{{ s.get_term_display }}</td>
+          <td>{{ s.year }}</td>
+          <td>{{ s.tuition }}</td>
+          <td>{{ s.activity_fee }}</td>
+          <td>{{ s.exam_fee }}</td>
+          <td>{{ s.other_fee }}</td>
+          <td><strong style="color:#00a040;">KES {{ s.total }}</strong></td>
+          <td>
+            <div class="d-flex gap-1">
+              <a href="{% url 'fee_structure_edit' s.pk %}" class="btn btn-sm btn-outline-primary" style="border-radius:6px;"><i class="bi bi-pencil"></i></a>
+              <a href="{% url 'fee_structure_delete' s.pk %}" class="btn btn-sm btn-outline-danger" style="border-radius:6px;"><i class="bi bi-trash"></i></a>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="9" class="text-center py-5" style="color:#6b7c93;">
+            <i class="bi bi-list-columns-reverse" style="font-size:40px; display:block; margin-bottom:12px; opacity:.3;"></i>
+            No fee structures yet. <a href="{% url 'fee_structure_create' %}">Add one →</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

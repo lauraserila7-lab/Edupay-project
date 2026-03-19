@@ -198,3 +198,4 @@ Then set `MPESA_CALLBACK_URL` to: `https://YOUR-NGROK-URL.ngrok.io/mpesa/callbac
 
 *Built with Django · EduPay © 2024*
 # Edupay-project
+# edupay1

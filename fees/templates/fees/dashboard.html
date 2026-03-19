@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<!-- Stat Cards -->
+<div class="row g-3 mb-4">
+  <div class="col-sm-6 col-xl-3">
+    <div class="stat-card">
+      <div class="stat-icon" style="background:#e8faf0; color:#00a040;">
+        <i class="bi bi-people-fill"></i>
+      </div>
+      <div class="stat-value" style="color:#0d1b2a;">{{ total_students }}</div>
+      <div class="stat-label">Active Students</div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-xl-3">
+    <div class="stat-card">
+      <div class="stat-icon" style="background:#e6f9e6; color:#00b300;">
+        <i class="bi bi-cash-stack"></i>
+      </div>
+      <div class="stat-value" style="color:#0d1b2a;">KES {{ total_collected|floatformat:0 }}</div>
+      <div class="stat-label">Total Collected</div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-xl-3">
+    <div class="stat-card">
+      <div class="stat-icon" style="background:#e8f0fe; color:#3d67d6;">
+        <i class="bi bi-building"></i>
+      </div>
+      <div class="stat-value" style="color:#0d1b2a;">{{ total_classes }}</div>
+      <div class="stat-label">Classes</div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-xl-3">
+    <div class="stat-card">
+      <div class="stat-icon" style="background:#fff3e0; color:#f57c00;">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+      </div>
+      <div class="stat-value" style="color:#0d1b2a;">{{ defaulter_count }}</div>
+      <div class="stat-label">Fee Defaulters</div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <!-- Chart -->
+  <div class="col-lg-7">
+    <div class="ep-card">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h6 class="mb-0 fw-700" style="font-size:15px; font-weight:700;">Monthly Collections</h6>
+        <span class="ep-badge badge-completed">Last 6 Months</span>
+      </div>
+      <canvas id="collectionsChart" height="100"></canvas>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="col-lg-5">
+    <div class="ep-card mb-4">
+      <h6 class="fw-700 mb-3" style="font-size:15px; font-weight:700;">Quick Actions</h6>
+      <div class="d-flex flex-column gap-2">
+        <a href="{% url 'student_create' %}" class="btn-ep btn text-start d-flex align-items-center gap-2" style="background:#0d1b2a;">
+          <i class="bi bi-person-plus-fill"></i> Add New Student
+        </a>
+        <a href="{% url 'payment_create' %}" class="btn-ep btn text-start d-flex align-items-center gap-2">
+          <i class="bi bi-plus-circle"></i> Record Cash Payment
+        </a>
+        <a href="{% url 'mpesa_pay' %}" class="btn-mpesa btn text-start d-flex align-items-center gap-2" style="background:#00b300;">
+          <i class="bi bi-phone-fill"></i> Pay via M-Pesa STK Push
+        </a>
+        <a href="{% url 'defaulters_report' %}" class="btn btn-outline-warning text-start d-flex align-items-center gap-2 fw-600" style="border-radius:8px; font-family:var(--font); font-size:13.5px;">
+          <i class="bi bi-file-earmark-text"></i> Fee Defaulters Report
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Payments -->
+  <div class="col-12">
+    <div class="ep-card">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h6 class="mb-0 fw-700" style="font-size:15px; font-weight:700;">Recent Payments</h6>
+        <a href="{% url 'payment_list' %}" class="btn-ep btn btn-sm">View All</a>
+      </div>
+      <div class="table-responsive">
+        <table class="ep-table">
+          <thead>
+            <tr>
+              <th>Student</th>
+              <th>Amount</th>
+              <th>Method</th>
+              <th>Term</th>
+              <th>Status</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for p in recent_payments %}
+            <tr>
+              <td><strong>{{ p.student.full_name }}</strong></td>
+              <td><strong>KES {{ p.amount }}</strong></td>
+              <td>
+                <span class="ep-badge {% if p.method == 'mpesa' %}badge-mpesa{% else %}badge-cash{% endif %}">
+                  {% if p.method == 'mpesa' %}<i class="bi bi-phone-fill"></i>{% endif %}
+                  {{ p.get_method_display }}
+                </span>
+              </td>
+              <td>Term {{ p.term }}</td>
+              <td>
+                <span class="ep-badge badge-{{ p.status }}">{{ p.get_status_display }}</span>
+              </td>
+              <td style="color:#6b7c93; font-size:12px;">{{ p.created_at|date:"d M Y" }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6" class="text-center py-4" style="color:#6b7c93;">No payments recorded yet.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const monthlyData = {{ monthly_data|safe }};
+const labels = monthlyData.map(d => {
+  const months = ['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return months[d.month] + ' ' + d.year;
+});
+const values = monthlyData.map(d => d.total);
+
+new Chart(document.getElementById('collectionsChart'), {
+  type: 'bar',
+  data: {
+    labels,
+    datasets: [{
+      label: 'KES Collected',
+      data: values,
+      backgroundColor: 'rgba(0, 200, 83, 0.15)',
+      borderColor: '#00c853',
+      borderWidth: 2,
+      borderRadius: 8,
+      borderSkipped: false,
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => ' KES ' + ctx.parsed.y.toLocaleString()
+        }
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        grid: { color: '#f0f0f0' },
+        ticks: { callback: v => 'KES ' + v.toLocaleString(), font: { size: 11 } }
+      },
+      x: { grid: { display: false }, ticks: { font: { size: 11 } } }
+    }
+  }
+});
+</script>
+{% endblock %}

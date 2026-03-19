@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EduPay — Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    :root {
+      --ep-green: #6b00c8;
+      --ep-navy: #0d1b2a;
+    }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--ep-navy);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .login-wrap {
+      width: 100%;
+      max-width: 420px;
+      padding: 20px;
+      animation: fadeUp .5s ease both;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .login-card {
+      background: #fff;
+      border-radius: 18px;
+      padding: 40px 36px;
+    }
+    .login-logo {
+      width: 56px; height: 56px;
+      background: var(--ep-green);
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 26px;
+      margin: 0 auto 20px;
+    }
+    .login-title {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--ep-navy);
+      text-align: center;
+      margin-bottom: 4px;
+    }
+    .login-sub {
+      text-align: center;
+      color: #6b7c93;
+      font-size: 14px;
+      margin-bottom: 28px;
+    }
+    .form-label { font-size: 13px; font-weight: 600; color: #1a2332; }
+    .form-control {
+      border-radius: 8px;
+      border: 1.5px solid #e4eaf0;
+      padding: 10px 14px;
+      font-size: 14px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .form-control:focus {
+      border-color: var(--ep-green);
+      box-shadow: 0 0 0 3px rgba(0,200,83,.12);
+    }
+    .btn-login {
+      width: 100%;
+      background: var(--ep-green);
+      color: #fff;
+      border: none;
+      border-radius: 9px;
+      padding: 12px;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background .15s, transform .1s;
+    }
+    .btn-login:hover { background: #00a040; transform: translateY(-1px); }
+    .error-msg { background: #fff0f0; border-radius: 8px; padding: 10px 14px; color: #d32f2f; font-size: 13px; margin-bottom: 16px; }
+  </style>
+</head>
+<body>
+  <div class="login-wrap">
+    <div class="login-card">
+      <div class="login-logo">🎓</div>
+      <div class="login-title">EduPay</div>
+      <div class="login-sub">School Fee Management System</div>
+
+      {% if form.errors %}
+        <div class="error-msg">
+          <i class="bi bi-exclamation-circle me-1"></i>
+          Invalid username or password. Please try again.
+        </div>
+      {% endif %}
+
+      <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label class="form-label">Username</label>
+          <input type="text" name="username" class="form-control" placeholder="Enter username" required autofocus>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Password</label>
+          <input type="password" name="password" class="form-control" placeholder="Enter password" required>
+        </div>
+        <button type="submit" class="btn-login">Sign In →</button>
+      </form>
+    </div>
+    <p style="text-align:center; color: rgba(255,255,255,.3); font-size: 12px; margin-top: 20px;">
+      &copy; 2024 EduPay · Powered by Django
+    </p>
+  </div>
+</body>
+</html>

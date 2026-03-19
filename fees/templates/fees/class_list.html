@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block title %}Classes{% endblock %}
+{% block page_title %}Classes{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <p class="mb-0" style="color:#6b7c93; font-size:14px;">{{ classes|length }} class(es)</p>
+  <a href="{% url 'class_create' %}" class="btn-ep btn d-flex align-items-center gap-2">
+    <i class="bi bi-plus-lg"></i> Add Class
+  </a>
+</div>
+
+<div class="row g-3">
+  {% for c in classes %}
+  <div class="col-md-4">
+    <div class="ep-card" style="transition:transform .2s, box-shadow .2s;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,.08)';" onmouseout="this.style.transform='';this.style.boxShadow='';">
+      <div class="d-flex justify-content-between align-items-start mb-3">
+        <div style="width:44px; height:44px; background:#e8f0fe; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:22px;">🏫</div>
+        <div class="d-flex gap-1">
+          <a href="{% url 'class_edit' c.pk %}" class="btn btn-sm btn-outline-primary" style="border-radius:6px;"><i class="bi bi-pencil"></i></a>
+          <a href="{% url 'class_delete' c.pk %}" class="btn btn-sm btn-outline-danger" style="border-radius:6px;"><i class="bi bi-trash"></i></a>
+        </div>
+      </div>
+      <h5 style="font-weight:800; margin-bottom:2px;">{{ c.name }}</h5>
+      <p style="color:#6b7c93; font-size:13px; margin-bottom:14px;">{{ c.level|default:"—" }}</p>
+      <div class="d-flex justify-content-between" style="background:#f4f7fb; border-radius:8px; padding:10px 14px;">
+        <div>
+          <div style="font-size:11px; color:#6b7c93; font-weight:600;">STUDENTS</div>
+          <div style="font-size:18px; font-weight:800;">{{ c.student_count }}</div>
+        </div>
+        <div class="text-end">
+          <div style="font-size:11px; color:#6b7c93; font-weight:600;">ANNUAL FEE</div>
+          <div style="font-size:18px; font-weight:800; color:#00a040;">KES {{ c.annual_fee }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <div class="col-12">
+    <div class="ep-card text-center py-5" style="color:#6b7c93;">
+      <i class="bi bi-building" style="font-size:48px; display:block; margin-bottom:12px; opacity:.3;"></i>
+      No classes yet. <a href="{% url 'class_create' %}">Add the first one →</a>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}
