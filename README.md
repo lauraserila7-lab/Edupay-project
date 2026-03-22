@@ -200,3 +200,4 @@ Then set `MPESA_CALLBACK_URL` to: `https://YOUR-NGROK-URL.ngrok.io/mpesa/callbac
 # Edupay-project
 # edupay1
 # edupay1
+# Edu-Pay
